@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #0a0a0f;
+  --text-primary: #00ff64;
+  --text-secondary: rgba(255, 255, 255, 0.4);
+  --text-dim: rgba(255, 255, 255, 0.2);
+  --border-subtle: rgba(0, 255, 100, 0.12);
+  --glass-bg: rgba(0, 255, 100, 0.04);
+  --glass-blur: 20px;
+  --glow-green: 0 0 20px rgba(0, 255, 100, 0.15);
+
+  --color-reddit: #ff4500;
+  --color-4chan: #789922;
+  --color-tiktok: #00f2ea;
+  --color-discord: #5865F2;
+  --color-youtube: #ff0000;
+  --color-twitter: #1DA1F2;
+  --color-twitch: #9146FF;
+  --color-instagram: #E1306C;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+}
+
+.glow-green {
+  box-shadow: var(--glow-green);
+}
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(0, 255, 100, 0.5);
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.animate-glitch {
+  animation: glitch 0.3s ease-in-out infinite;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(60px);
+}
