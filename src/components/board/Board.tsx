@@ -3,7 +3,7 @@
 import { useRef, useEffect } from "react";
 import { BOARD } from "@/lib/board-data";
 import { PLATFORM_COLORS, PLATFORM_LABELS } from "@/lib/constants";
-import type { GameState, ChatMessage } from "@/types/game";
+import type { GameState } from "@/types/game";
 import Tile from "./Tile";
 import CornerTile from "./CornerTile";
 import Dice from "@/components/game/Dice";
@@ -40,7 +40,6 @@ export default function Board({
   const currentTile = showBuyAuction ? BOARD[players[gameState.currentPlayerIndex]?.position ?? 0] : null;
   const canAfford = currentTile?.price ? (playerMogz ?? 0) >= currentTile.price : false;
 
-  // Auto-scroll log
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: "smooth" });
   }, [messages.length]);
@@ -68,11 +67,10 @@ export default function Board({
     );
   };
 
-  // Get last 8 system messages for the log
-  const recentLogs = messages.filter((m) => m.isSystem).slice(-8);
+  const recentLogs = messages.filter((m) => m.isSystem).slice(-6);
 
   return (
-    <div className="grid grid-cols-11 grid-rows-11 gap-[1px] md:gap-[2px] w-full max-w-[700px] max-h-[calc(100dvh-80px)] aspect-square">
+    <div className="grid grid-cols-11 grid-rows-11 w-full max-w-[700px] max-h-[calc(100dvh-80px)] aspect-square border border-[rgba(255,255,255,0.1)] rounded-lg overflow-hidden bg-[rgba(0,0,0,0.3)]">
       {topRow.map((i) => renderTile(i, "top"))}
 
       {leftCol.map((leftIdx, row) => (
@@ -80,32 +78,29 @@ export default function Board({
           {renderTile(leftIdx, "left")}
 
           {row === 0 && (
-            <div className="col-span-9 row-span-9 flex flex-col items-center justify-between p-2 md:p-4 relative overflow-hidden">
-              <div className="glow-orb w-[200px] h-[200px] bg-[rgba(0,255,100,0.03)] absolute" />
-
+            <div className="col-span-9 row-span-9 flex flex-col items-center justify-center p-1 md:p-3 relative overflow-hidden bg-[rgba(0,0,0,0.4)]">
               {/* Game Log */}
               <div
                 ref={logRef}
-                className="w-full flex-1 overflow-y-auto max-h-[30%] mb-2 scrollbar-hide"
+                className="w-full flex-1 overflow-y-auto max-h-[35%] scrollbar-hide"
               >
                 {recentLogs.map((msg) => (
-                  <div key={msg.id} className="text-[9px] md:text-[11px] font-mono text-[var(--text-dim)] leading-relaxed truncate">
+                  <div key={msg.id} className="text-[7px] md:text-[10px] font-mono text-[var(--text-dim)] leading-relaxed">
                     {msg.text}
                   </div>
                 ))}
               </div>
 
-              {/* Dice */}
-              <div className="flex flex-col items-center gap-3 z-10">
+              {/* Dice + Actions */}
+              <div className="flex flex-col items-center gap-2 md:gap-3 z-10">
                 <Dice values={dice} />
 
-                {/* Action buttons directly below dice */}
                 {showRollButton && !inShadowBan && (
-                  <Button size="md" onClick={onRoll}>ROLL DICE</Button>
+                  <Button size="sm" onClick={onRoll}>ROLL DICE</Button>
                 )}
 
                 {showRollButton && inShadowBan && (
-                  <div className="flex flex-wrap gap-2 justify-center">
+                  <div className="flex flex-wrap gap-1 justify-center">
                     <Button size="sm" onClick={onRoll}>ROLL DOUBLES</Button>
                     <Button size="sm" variant="secondary" onClick={onShadowBanPay}>PAY 50M</Button>
                     {hasGetOutCard && (
@@ -114,45 +109,39 @@ export default function Board({
                   </div>
                 )}
 
-                {/* Buy/Auction inline (like richup.io) */}
                 {showBuyAuction && currentTile && (
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="text-xs font-mono text-[var(--text-secondary)] text-center">
-                      <span
-                        className="font-bold"
-                        style={{ color: currentTile.platform ? PLATFORM_COLORS[currentTile.platform] : "#00ff64" }}
-                      >
-                        {currentTile.name}
-                      </span>
-                      {currentTile.platform && (
-                        <span className="text-[var(--text-dim)]"> · {PLATFORM_LABELS[currentTile.platform]}</span>
-                      )}
-                    </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <span
+                      className="text-[10px] md:text-xs font-mono font-bold"
+                      style={{ color: currentTile.platform ? PLATFORM_COLORS[currentTile.platform] : "#00ff64" }}
+                    >
+                      {currentTile.name}
+                    </span>
                     <div className="flex gap-2">
                       <Button size="sm" onClick={onBuy} disabled={!canAfford}>
-                        BUY {currentTile.price}M
+                        Buy {currentTile.price}M
                       </Button>
                       <Button size="sm" variant="secondary" onClick={onAuction}>
-                        AUCTION
+                        Auction
                       </Button>
                     </div>
                   </div>
                 )}
 
                 {showEndTurnButton && (
-                  <Button size="md" variant="secondary" onClick={onEndTurn}>END TURN</Button>
+                  <Button size="sm" variant="secondary" onClick={onEndTurn}>END TURN</Button>
                 )}
 
                 {!showRollButton && !showEndTurnButton && !showBuyAuction && (
-                  <div className="text-[10px] md:text-xs font-mono text-[var(--text-dim)]">
+                  <div className="text-[8px] md:text-[11px] font-mono text-[var(--text-dim)]">
                     {players[gameState.currentPlayerIndex]?.name}&apos;s turn
                   </div>
                 )}
               </div>
 
-              {/* Current player indicator */}
-              <div className="text-[9px] md:text-[10px] font-mono text-[var(--text-dim)] mt-2">
-                {dice[0] + dice[1] > 0 && `Last roll: ${dice[0]} + ${dice[1]} = ${dice[0] + dice[1]}`}
+              {/* Last roll */}
+              <div className="text-[7px] md:text-[9px] font-mono text-[var(--text-dim)] mt-1">
+                {dice[0] + dice[1] > 0 && `${dice[0]} + ${dice[1]} = ${dice[0] + dice[1]}`}
               </div>
             </div>
           )}

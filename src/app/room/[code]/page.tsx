@@ -140,40 +140,42 @@ export default function RoomPage() {
     const landedTile = me ? BOARD[me.position] : null;
 
     return (
-      <main className="flex h-dvh flex-col items-center p-1 md:p-4 gap-1 relative overflow-hidden">
-        <div className="glow-orb w-[300px] h-[300px] bg-[rgba(0,255,100,0.03)] top-0 left-0 absolute" />
+      <main className="flex h-dvh flex-col md:flex-row p-0 md:p-2 gap-0 md:gap-2 relative overflow-hidden">
+        {/* Left sidebar - Chat (desktop only) */}
+        <div className="w-[250px] shrink-0 hidden lg:flex flex-col gap-2">
+          <Chat messages={gameState.messages} onSend={(text) => send({ type: "chat", text })} myId={myId} />
+        </div>
 
-        <PlayerStats players={gameState.players} currentPlayerIndex={gameState.currentPlayerIndex} myId={myId} />
+        {/* Center - Board */}
+        <div className="flex-1 flex flex-col items-center justify-center min-h-0 min-w-0">
+          <Board
+            gameState={gameState}
+            currentPlayerId={currentPlayer?.id}
+            isMyTurn={isMyTurn}
+            onRoll={() => send({ type: "roll-dice" })}
+            onEndTurn={() => send({ type: "end-turn" })}
+            onBuy={() => send({ type: "buy-property" })}
+            onAuction={() => send({ type: "auction-start" })}
+            onShadowBanPay={() => send({ type: "shadow-ban-pay" })}
+            onShadowBanCard={() => send({ type: "shadow-ban-card" })}
+            inShadowBan={me?.inShadowBan ?? false}
+            hasGetOutCard={(me?.getOutOfBanCards ?? 0) > 0}
+            playerMogz={me?.mogz ?? 0}
+          />
 
-        <div className="flex gap-4 w-full max-w-[900px] justify-center flex-1 min-h-0">
-          <div className="flex-1 flex items-start md:items-center justify-center min-h-0">
-            <Board
-              gameState={gameState}
-              currentPlayerId={currentPlayer?.id}
-              isMyTurn={isMyTurn}
-              onRoll={() => send({ type: "roll-dice" })}
-              onEndTurn={() => send({ type: "end-turn" })}
-              onBuy={() => send({ type: "buy-property" })}
-              onAuction={() => send({ type: "auction-start" })}
-              onShadowBanPay={() => send({ type: "shadow-ban-pay" })}
-              onShadowBanCard={() => send({ type: "shadow-ban-card" })}
-              inShadowBan={me?.inShadowBan ?? false}
-              hasGetOutCard={(me?.getOutOfBanCards ?? 0) > 0}
-              playerMogz={me?.mogz ?? 0}
-            />
-          </div>
-          <div className="w-[200px] shrink-0 hidden lg:block">
-            <Chat messages={gameState.messages} onSend={(text) => send({ type: "chat", text })} myId={myId} />
+          {/* Player stats + actions below board */}
+          <div className="w-full max-w-[700px] flex flex-col gap-1 mt-1 md:mt-2 px-1">
+            <PlayerStats players={gameState.players} currentPlayerIndex={gameState.currentPlayerIndex} myId={myId} />
+            {isMyTurn && me && (
+              <div className="flex gap-2 justify-center">
+                <Button size="sm" variant="secondary" onClick={() => setShowTrade(true)}>TRADE</Button>
+                <Button size="sm" variant="secondary" onClick={() => setShowBuild(true)}>BUILD</Button>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Bottom action bar - only trade/build */}
-        {isMyTurn && me && (
-          <div className="flex gap-2 items-center">
-            <Button size="sm" variant="secondary" onClick={() => setShowTrade(true)}>TRADE</Button>
-            <Button size="sm" variant="secondary" onClick={() => setShowBuild(true)}>BUILD</Button>
-          </div>
-        )}
+        {/* Right sidebar - Players (desktop only, already shown below board on mobile) */}
 
         {/* RNG/DMs Card Modal */}
         {gameState.turnPhase === "drawing-card" && gameState.currentCard && (

@@ -17,17 +17,24 @@ const CORNER_ICONS: Record<string, string> = {
   "Get Reported": "⚠️",
 };
 
+const CORNER_SHORT: Record<string, string> = {
+  Homepage: "HOME",
+  "Shadow Ban": "BAN",
+  AFK: "AFK",
+  "Get Reported": "REPORT",
+};
+
 export default function CornerTile({ name, index, players, currentPlayerId }: CornerTileProps) {
   const playersHere = players.filter((p) => p.position === index && !p.bankrupt);
 
   return (
-    <div className="glass-panel flex flex-col items-center justify-center p-1 w-full h-full">
-      <span className="text-sm md:text-xl mb-0.5">{CORNER_ICONS[name] ?? "❓"}</span>
-      <span className="text-[7px] md:text-[9px] font-mono text-[var(--text-secondary)] text-center leading-tight">
-        {name}
+    <div className="flex flex-col items-center justify-center w-full h-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)]">
+      <span className="text-xs md:text-lg">{CORNER_ICONS[name] ?? "❓"}</span>
+      <span className="text-[5px] md:text-[8px] font-mono text-[var(--text-dim)] text-center leading-tight">
+        {CORNER_SHORT[name] ?? name}
       </span>
       {playersHere.length > 0 && (
-        <div className="flex flex-wrap gap-[2px] mt-1 justify-center">
+        <div className="flex flex-wrap gap-[1px] mt-[1px] justify-center">
           {playersHere.map((p) => (
             <Token key={p.id} token={p.token} size="sm" isCurrentPlayer={p.id === currentPlayerId} />
           ))}

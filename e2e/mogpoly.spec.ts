@@ -131,8 +131,8 @@ test.describe("Multiplayer Lobby", () => {
 
     // Both players should see the game board (MOGPOLY in center)
     // The board renders the title in the center
-    await expect(page1.locator("text=Homepage").first()).toBeVisible({ timeout: 10000 });
-    await expect(page2.locator("text=Homepage").first()).toBeVisible({ timeout: 10000 });
+    await expect(page1.locator("text=HOME").first()).toBeVisible({ timeout: 10000 });
+    await expect(page2.locator("text=HOME").first()).toBeVisible({ timeout: 10000 });
 
     // One player should see the ROLL DICE button
     const rollVisible1 = await page1.locator("text=ROLL DICE").isVisible().catch(() => false);
