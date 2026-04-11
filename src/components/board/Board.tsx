@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { BOARD } from "@/lib/board-data";
 import type { GameState } from "@/types/game";
 import Tile from "./Tile";
@@ -21,14 +20,11 @@ interface BoardProps {
 
 export default function Board({ gameState, currentPlayerId, onTileClick, isMyTurn, onRoll, onEndTurn, inShadowBan }: BoardProps) {
   const { board, players, dice } = gameState;
-  const [rolling, setRolling] = useState(false);
-  const showRollButton = isMyTurn && gameState.turnPhase === "waiting-for-roll" && !rolling;
+  const showRollButton = isMyTurn && gameState.turnPhase === "waiting-for-roll";
   const showEndTurnButton = isMyTurn && gameState.turnPhase === "turn-ended";
 
   const handleRoll = () => {
-    setRolling(true);
     onRoll?.();
-    // Animation runs ~900ms (15 frames * 60ms), then onRollComplete resets
   };
 
   // Board layout: 11x11 grid
@@ -78,11 +74,7 @@ export default function Board({ gameState, currentPlayerId, onTileClick, isMyTur
               <GlitchText text="MOGPOLY" className="text-2xl md:text-3xl" as="h2" />
 
               {/* Dice */}
-              <Dice
-                values={dice}
-                rolling={rolling}
-                onRollComplete={() => setRolling(false)}
-              />
+              <Dice values={dice} />
 
               {/* Roll button right below dice */}
               {showRollButton && (
@@ -98,13 +90,7 @@ export default function Board({ gameState, currentPlayerId, onTileClick, isMyTur
                 </Button>
               )}
 
-              {rolling && (
-                <div className="text-xs font-mono text-[#00ff64] animate-pulse">
-                  Rolling...
-                </div>
-              )}
-
-              {!showRollButton && !showEndTurnButton && !rolling && (
+              {!showRollButton && !showEndTurnButton && (
                 <div className="text-xs font-mono text-[var(--text-dim)]">
                   {players[gameState.currentPlayerIndex]?.name}&apos;s turn
                 </div>

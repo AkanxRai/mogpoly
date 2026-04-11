@@ -38,12 +38,12 @@ export default function Tile({ definition, state, players, currentPlayerId, side
 
       {/* Content */}
       <div className="flex-1 p-1 flex flex-col justify-between min-w-0">
-        <div className="text-[8px] font-mono text-[var(--text-secondary)] truncate leading-tight">
+        <div className="text-[10px] font-mono text-[var(--text-secondary)] truncate leading-tight">
           {definition.name}
         </div>
 
         {definition.price && (
-          <div className="text-[7px] font-mono text-[var(--text-dim)]">
+          <div className="text-[9px] font-mono text-[var(--text-dim)]">
             {definition.price}M
           </div>
         )}

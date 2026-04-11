@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 interface DiceProps {
   values: [number, number];
-  rolling?: boolean;
-  onRollComplete?: () => void;
 }
 
 const DOT_POSITIONS: Record<number, [number, number][]> = {
@@ -33,68 +31,70 @@ function DieFace({ value }: { value: number }) {
   );
 }
 
-export default function Dice({ values, rolling, onRollComplete }: DiceProps) {
-  const [displayValues, setDisplayValues] = useState(values);
-  const [isAnimating, setIsAnimating] = useState(false);
+export default function Dice({ values }: DiceProps) {
+  const [displayValues, setDisplayValues] = useState<[number, number]>(values);
+  const [animating, setAnimating] = useState(false);
+  const prevValues = useRef<[number, number]>(values);
+  const animationRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (rolling && !isAnimating) {
-      setIsAnimating(true);
-      let frame = 0;
-      const totalFrames = 15;
-      const interval = setInterval(() => {
-        frame++;
-        setDisplayValues([
-          Math.floor(Math.random() * 6) + 1,
-          Math.floor(Math.random() * 6) + 1,
-        ]);
-        if (frame >= totalFrames) {
-          clearInterval(interval);
-          setDisplayValues(values);
-          setIsAnimating(false);
-          onRollComplete?.();
-        }
-      }, 60);
-      return () => clearInterval(interval);
-    }
-    if (!rolling) {
+    // Detect if dice values actually changed (someone rolled)
+    const changed = values[0] !== prevValues.current[0] || values[1] !== prevValues.current[1];
+    prevValues.current = values;
+
+    if (!changed) {
       setDisplayValues(values);
+      return;
     }
-  }, [rolling, values]);
+
+    // Start roll animation
+    setAnimating(true);
+    let frame = 0;
+    const totalFrames = 12;
+
+    if (animationRef.current) clearInterval(animationRef.current);
+
+    animationRef.current = setInterval(() => {
+      frame++;
+      setDisplayValues([
+        Math.floor(Math.random() * 6) + 1,
+        Math.floor(Math.random() * 6) + 1,
+      ]);
+      if (frame >= totalFrames) {
+        if (animationRef.current) clearInterval(animationRef.current);
+        animationRef.current = null;
+        setDisplayValues(values);
+        setAnimating(false);
+      }
+    }, 65);
+
+    return () => {
+      if (animationRef.current) {
+        clearInterval(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+  }, [values[0], values[1]]);
 
   return (
     <div className="flex gap-4">
       {displayValues.map((val, i) => (
         <motion.div
           key={i}
-          animate={isAnimating ? {
-            rotate: [0, -8, 8, -5, 5, 0],
-            y: [0, -6, 4, -3, 2, 0],
-            scale: [1, 1.08, 0.95, 1.04, 0.98, 1],
-          } : { rotate: 0, y: 0, scale: 1 }}
-          transition={isAnimating ? {
-            duration: 0.3,
-            repeat: Infinity,
-            ease: "easeInOut",
-          } : { type: "spring", damping: 12 }}
-          className={`glass-panel w-16 h-16 p-2 ${
-            isAnimating
-              ? "border-[rgba(0,255,100,0.4)] shadow-[0_0_20px_rgba(0,255,100,0.2)]"
-              : ""
+          animate={animating ? {
+            y: [0, -12, 0, -6, 0],
+            rotate: [0, -10, 10, -5, 0],
+          } : { y: 0, rotate: 0 }}
+          transition={animating ? {
+            duration: 0.4,
+            repeat: 1,
+            ease: "easeOut",
+          } : { type: "spring", damping: 20, stiffness: 300 }}
+          className={`glass-panel w-16 h-16 p-2 transition-shadow duration-200 ${
+            animating ? "shadow-[0_0_25px_rgba(0,255,100,0.3)] border-[rgba(0,255,100,0.5)]" : ""
           }`}
         >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`${val}-${isAnimating}`}
-              initial={{ opacity: 0, scale: 0.6, rotateZ: -20 }}
-              animate={{ opacity: 1, scale: 1, rotateZ: 0 }}
-              exit={{ opacity: 0, scale: 0.6, rotateZ: 20 }}
-              transition={{ duration: 0.08 }}
-              className="w-full h-full"
-            >
-              <DieFace value={val} />
-            </motion.div>
-          </AnimatePresence>
+          <DieFace value={val} />
         </motion.div>
       ))}
     </div>
