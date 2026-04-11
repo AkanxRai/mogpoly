@@ -1,19 +1,35 @@
 "use client";
 
+import { useState } from "react";
 import { BOARD } from "@/lib/board-data";
 import type { GameState } from "@/types/game";
 import Tile from "./Tile";
 import CornerTile from "./CornerTile";
 import GlitchText from "@/components/ui/GlitchText";
+import Dice from "@/components/game/Dice";
+import Button from "@/components/ui/Button";
 
 interface BoardProps {
   gameState: GameState;
   currentPlayerId?: string;
   onTileClick?: (index: number) => void;
+  isMyTurn?: boolean;
+  onRoll?: () => void;
+  onEndTurn?: () => void;
+  inShadowBan?: boolean;
 }
 
-export default function Board({ gameState, currentPlayerId, onTileClick }: BoardProps) {
+export default function Board({ gameState, currentPlayerId, onTileClick, isMyTurn, onRoll, onEndTurn, inShadowBan }: BoardProps) {
   const { board, players, dice } = gameState;
+  const [rolling, setRolling] = useState(false);
+  const showRollButton = isMyTurn && gameState.turnPhase === "waiting-for-roll" && !rolling;
+  const showEndTurnButton = isMyTurn && gameState.turnPhase === "turn-ended";
+
+  const handleRoll = () => {
+    setRolling(true);
+    onRoll?.();
+    // Animation runs ~900ms (15 frames * 60ms), then onRollComplete resets
+  };
 
   // Board layout: 11x11 grid
   // Corners: (0,0)=AFK  (0,10)=GetReported  (10,0)=ShadowBan  (10,10)=Homepage
@@ -57,23 +73,42 @@ export default function Board({ gameState, currentPlayerId, onTileClick }: Board
 
           {/* Center area (9 cols, only render content in center of grid) */}
           {row === 0 && (
-            <div className="col-span-9 row-span-9 flex flex-col items-center justify-center gap-4 relative">
+            <div className="col-span-9 row-span-9 flex flex-col items-center justify-center gap-5 relative">
               <div className="glow-orb w-[200px] h-[200px] bg-[rgba(0,255,100,0.03)] absolute" />
               <GlitchText text="MOGPOLY" className="text-2xl md:text-3xl" as="h2" />
 
-              {/* Dice display */}
-              <div className="flex gap-3">
-                <div className="glass-panel w-12 h-12 flex items-center justify-center text-xl font-mono font-bold text-glow">
-                  {dice[0]}
-                </div>
-                <div className="glass-panel w-12 h-12 flex items-center justify-center text-xl font-mono font-bold text-glow">
-                  {dice[1]}
-                </div>
-              </div>
+              {/* Dice */}
+              <Dice
+                values={dice}
+                rolling={rolling}
+                onRollComplete={() => setRolling(false)}
+              />
 
-              <div className="text-xs font-mono text-[var(--text-dim)]">
-                {players[gameState.currentPlayerIndex]?.name}&apos;s turn
-              </div>
+              {/* Roll button right below dice */}
+              {showRollButton && (
+                <Button size="md" onClick={handleRoll}>
+                  {inShadowBan ? "ROLL FOR DOUBLES" : "ROLL DICE"}
+                </Button>
+              )}
+
+              {/* End turn button replaces roll button */}
+              {showEndTurnButton && (
+                <Button size="md" variant="secondary" onClick={onEndTurn}>
+                  END TURN
+                </Button>
+              )}
+
+              {rolling && (
+                <div className="text-xs font-mono text-[#00ff64] animate-pulse">
+                  Rolling...
+                </div>
+              )}
+
+              {!showRollButton && !showEndTurnButton && !rolling && (
+                <div className="text-xs font-mono text-[var(--text-dim)]">
+                  {players[gameState.currentPlayerIndex]?.name}&apos;s turn
+                </div>
+              )}
             </div>
           )}
 

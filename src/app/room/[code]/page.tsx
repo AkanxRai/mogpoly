@@ -137,7 +137,14 @@ export default function RoomPage() {
 
         <div className="flex gap-4 w-full max-w-[900px] justify-center flex-1">
           <div className="flex-1 flex items-center justify-center">
-            <Board gameState={gameState} currentPlayerId={currentPlayer?.id} />
+            <Board
+              gameState={gameState}
+              currentPlayerId={currentPlayer?.id}
+              isMyTurn={isMyTurn}
+              onRoll={() => send({ type: "roll-dice" })}
+              onEndTurn={() => send({ type: "end-turn" })}
+              inShadowBan={me?.inShadowBan ?? false}
+            />
           </div>
           <div className="w-[200px] shrink-0 hidden md:block">
             <Chat messages={gameState.messages} onSend={(text) => send({ type: "chat", text })} myId={myId} />
@@ -151,7 +158,6 @@ export default function RoomPage() {
             isMyTurn={isMyTurn}
             inShadowBan={me?.inShadowBan ?? false}
             hasGetOutCard={(me?.getOutOfBanCards ?? 0) > 0}
-            onRoll={() => send({ type: "roll-dice" })}
             onBuy={() => send({ type: "buy-property" })}
             onAuction={() => send({ type: "auction-start" })}
             onEndTurn={() => send({ type: "end-turn" })}

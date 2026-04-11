@@ -8,7 +8,6 @@ interface ActionBarProps {
   isMyTurn: boolean;
   inShadowBan: boolean;
   hasGetOutCard: boolean;
-  onRoll: () => void;
   onBuy: () => void;
   onAuction: () => void;
   onEndTurn: () => void;
@@ -18,7 +17,7 @@ interface ActionBarProps {
 
 export default function ActionBar({
   turnPhase, isMyTurn, inShadowBan, hasGetOutCard,
-  onRoll, onBuy, onAuction, onEndTurn, onShadowBanPay, onShadowBanCard,
+  onBuy, onAuction, onEndTurn, onShadowBanPay, onShadowBanCard,
 }: ActionBarProps) {
   if (!isMyTurn) {
     return (
@@ -30,13 +29,9 @@ export default function ActionBar({
 
   return (
     <div className="glass-panel p-3 flex flex-wrap gap-2 justify-center">
-      {turnPhase === "waiting-for-roll" && !inShadowBan && (
-        <Button onClick={onRoll}>ROLL DICE</Button>
-      )}
-
+      {/* Shadow Ban escape options (pay/card) — roll is in the board center */}
       {turnPhase === "waiting-for-roll" && inShadowBan && (
         <>
-          <Button onClick={onRoll}>ROLL FOR DOUBLES</Button>
           <Button variant="secondary" onClick={onShadowBanPay}>PAY 50M</Button>
           {hasGetOutCard && (
             <Button variant="secondary" onClick={onShadowBanCard}>USE CARD</Button>

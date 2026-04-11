@@ -34,6 +34,16 @@ Thumbs.db
 # Superpowers brainstorming
 .superpowers/
 
+# Partykit local state
+.partykit/
+
+# Playwright
+test-results/
+playwright-report/
+
+# Temp scaffold
+temp-next/
+
 # Vercel
 .vercel
 
