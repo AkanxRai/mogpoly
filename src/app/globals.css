@@ -75,3 +75,20 @@ body {
   pointer-events: none;
   filter: blur(60px);
 }
+
+/* Hide scrollbar but keep scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Board fits viewport on mobile */
+@media (max-width: 640px) {
+  .aspect-square {
+    max-height: calc(100dvh - 120px);
+    max-width: calc(100dvh - 120px);
+  }
+}

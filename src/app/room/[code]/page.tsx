@@ -11,11 +11,9 @@ import RoomLink from "@/components/lobby/RoomLink";
 import PlayerList from "@/components/lobby/PlayerList";
 import TokenPicker from "@/components/lobby/TokenPicker";
 import Board from "@/components/board/Board";
-import ActionBar from "@/components/game/ActionBar";
 import PlayerStats from "@/components/game/PlayerStats";
 import Chat from "@/components/game/Chat";
 import Token from "@/components/game/Token";
-import PropertyCard from "@/components/modals/PropertyCard";
 import RNGCard from "@/components/modals/RNGCard";
 import AuctionModal from "@/components/modals/AuctionModal";
 import TradeModal from "@/components/modals/TradeModal";
@@ -142,57 +140,39 @@ export default function RoomPage() {
     const landedTile = me ? BOARD[me.position] : null;
 
     return (
-      <main className="flex min-h-screen flex-col items-center p-4 gap-4 relative">
+      <main className="flex min-h-dvh flex-col items-center p-2 md:p-4 gap-2 relative overflow-hidden">
         <div className="glow-orb w-[300px] h-[300px] bg-[rgba(0,255,100,0.03)] top-0 left-0 absolute" />
 
         <PlayerStats players={gameState.players} currentPlayerIndex={gameState.currentPlayerIndex} myId={myId} />
 
-        <div className="flex gap-4 w-full max-w-[900px] justify-center flex-1">
-          <div className="flex-1 flex items-center justify-center">
+        <div className="flex gap-4 w-full max-w-[900px] justify-center flex-1 min-h-0">
+          <div className="flex-1 flex items-center justify-center min-h-0">
             <Board
               gameState={gameState}
               currentPlayerId={currentPlayer?.id}
               isMyTurn={isMyTurn}
               onRoll={() => send({ type: "roll-dice" })}
               onEndTurn={() => send({ type: "end-turn" })}
+              onBuy={() => send({ type: "buy-property" })}
+              onAuction={() => send({ type: "auction-start" })}
+              onShadowBanPay={() => send({ type: "shadow-ban-pay" })}
+              onShadowBanCard={() => send({ type: "shadow-ban-card" })}
               inShadowBan={me?.inShadowBan ?? false}
+              hasGetOutCard={(me?.getOutOfBanCards ?? 0) > 0}
+              playerMogz={me?.mogz ?? 0}
             />
           </div>
-          <div className="w-[200px] shrink-0 hidden md:block">
+          <div className="w-[200px] shrink-0 hidden lg:block">
             <Chat messages={gameState.messages} onSend={(text) => send({ type: "chat", text })} myId={myId} />
           </div>
         </div>
 
-        {/* Action Bar with trade/build buttons */}
-        <div className="flex gap-2 items-center">
-          <ActionBar
-            turnPhase={gameState.turnPhase}
-            isMyTurn={isMyTurn}
-            inShadowBan={me?.inShadowBan ?? false}
-            hasGetOutCard={(me?.getOutOfBanCards ?? 0) > 0}
-            onBuy={() => send({ type: "buy-property" })}
-            onAuction={() => send({ type: "auction-start" })}
-            onEndTurn={() => send({ type: "end-turn" })}
-            onShadowBanPay={() => send({ type: "shadow-ban-pay" })}
-            onShadowBanCard={() => send({ type: "shadow-ban-card" })}
-          />
-          {isMyTurn && me && (
-            <div className="flex gap-1">
-              <Button size="sm" variant="secondary" onClick={() => setShowTrade(true)}>TRADE</Button>
-              <Button size="sm" variant="secondary" onClick={() => setShowBuild(true)}>BUILD</Button>
-            </div>
-          )}
-        </div>
-
-        {/* Property Buy/Auction Modal */}
-        {isMyTurn && gameState.turnPhase === "buy-or-auction" && me && (
-          <PropertyCard
-            tileIndex={me.position}
-            open
-            onBuy={() => send({ type: "buy-property" })}
-            onAuction={() => send({ type: "auction-start" })}
-            playerMogz={me.mogz}
-          />
+        {/* Bottom action bar - only trade/build */}
+        {isMyTurn && me && (
+          <div className="flex gap-2 items-center">
+            <Button size="sm" variant="secondary" onClick={() => setShowTrade(true)}>TRADE</Button>
+            <Button size="sm" variant="secondary" onClick={() => setShowBuild(true)}>BUILD</Button>
+          </div>
         )}
 
         {/* RNG/DMs Card Modal */}
