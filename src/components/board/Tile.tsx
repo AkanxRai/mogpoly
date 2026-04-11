@@ -23,10 +23,9 @@ export default function Tile({ definition, state, players, currentPlayerId, side
     <motion.div
       whileHover={{ scale: 1.02 }}
       onClick={onClick}
-      className={`relative glass-panel overflow-hidden cursor-pointer flex ${
+      className={`relative glass-panel overflow-hidden cursor-pointer flex w-full h-full ${
         isVertical ? "flex-row" : "flex-col"
       } ${state.owner ? "border-opacity-40" : ""}`}
-      style={{ minHeight: isVertical ? undefined : "70px", minWidth: isVertical ? "70px" : undefined }}
     >
       {/* Platform color accent bar */}
       {platformColor && (
@@ -37,13 +36,13 @@ export default function Tile({ definition, state, players, currentPlayerId, side
       )}
 
       {/* Content */}
-      <div className="flex-1 p-1 flex flex-col justify-between min-w-0">
-        <div className="text-[10px] font-mono text-[var(--text-secondary)] truncate leading-tight">
+      <div className="flex-1 p-0.5 md:p-1 flex flex-col justify-between min-w-0 overflow-hidden">
+        <div className="text-[7px] md:text-[10px] font-mono text-[var(--text-secondary)] truncate leading-tight">
           {definition.name}
         </div>
 
         {definition.price && (
-          <div className="text-[9px] font-mono text-[var(--text-dim)]">
+          <div className="text-[6px] md:text-[9px] font-mono text-[var(--text-dim)]">
             {definition.price}M
           </div>
         )}

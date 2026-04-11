@@ -72,7 +72,7 @@ export default function Board({
   const recentLogs = messages.filter((m) => m.isSystem).slice(-8);
 
   return (
-    <div className="grid grid-cols-11 grid-rows-11 gap-[2px] w-full max-w-[700px] aspect-square">
+    <div className="grid grid-cols-11 grid-rows-11 gap-[1px] md:gap-[2px] w-full max-w-[700px] max-h-[calc(100dvh-80px)] aspect-square">
       {topRow.map((i) => renderTile(i, "top"))}
 
       {leftCol.map((leftIdx, row) => (

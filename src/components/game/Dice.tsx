@@ -77,7 +77,7 @@ export default function Dice({ values }: DiceProps) {
   }, [values[0], values[1]]);
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-2 md:gap-4">
       {displayValues.map((val, i) => (
         <motion.div
           key={i}
@@ -90,7 +90,7 @@ export default function Dice({ values }: DiceProps) {
             repeat: 1,
             ease: "easeOut",
           } : { type: "spring", damping: 20, stiffness: 300 }}
-          className={`glass-panel w-16 h-16 p-2 transition-shadow duration-200 ${
+          className={`glass-panel w-10 h-10 md:w-16 md:h-16 p-1.5 md:p-2 transition-shadow duration-200 ${
             animating ? "shadow-[0_0_25px_rgba(0,255,100,0.3)] border-[rgba(0,255,100,0.5)]" : ""
           }`}
         >

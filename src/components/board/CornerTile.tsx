@@ -21,9 +21,9 @@ export default function CornerTile({ name, index, players, currentPlayerId }: Co
   const playersHere = players.filter((p) => p.position === index && !p.bankrupt);
 
   return (
-    <div className="glass-panel flex flex-col items-center justify-center p-2 aspect-square">
-      <span className="text-xl mb-1">{CORNER_ICONS[name] ?? "❓"}</span>
-      <span className="text-[9px] font-mono text-[var(--text-secondary)] text-center leading-tight">
+    <div className="glass-panel flex flex-col items-center justify-center p-1 w-full h-full">
+      <span className="text-sm md:text-xl mb-0.5">{CORNER_ICONS[name] ?? "❓"}</span>
+      <span className="text-[7px] md:text-[9px] font-mono text-[var(--text-secondary)] text-center leading-tight">
         {name}
       </span>
       {playersHere.length > 0 && (

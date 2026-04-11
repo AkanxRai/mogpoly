@@ -140,13 +140,13 @@ export default function RoomPage() {
     const landedTile = me ? BOARD[me.position] : null;
 
     return (
-      <main className="flex min-h-dvh flex-col items-center p-2 md:p-4 gap-2 relative overflow-hidden">
+      <main className="flex h-dvh flex-col items-center p-1 md:p-4 gap-1 relative overflow-hidden">
         <div className="glow-orb w-[300px] h-[300px] bg-[rgba(0,255,100,0.03)] top-0 left-0 absolute" />
 
         <PlayerStats players={gameState.players} currentPlayerIndex={gameState.currentPlayerIndex} myId={myId} />
 
         <div className="flex gap-4 w-full max-w-[900px] justify-center flex-1 min-h-0">
-          <div className="flex-1 flex items-center justify-center min-h-0">
+          <div className="flex-1 flex items-start md:items-center justify-center min-h-0">
             <Board
               gameState={gameState}
               currentPlayerId={currentPlayer?.id}

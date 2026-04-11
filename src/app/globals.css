@@ -85,10 +85,3 @@ body {
   display: none;
 }
 
-/* Board fits viewport on mobile */
-@media (max-width: 640px) {
-  .aspect-square {
-    max-height: calc(100dvh - 120px);
-    max-width: calc(100dvh - 120px);
-  }
-}
