@@ -27,7 +27,7 @@ import type { TokenType } from "@/types/game";
 export default function RoomPage() {
   const params = useParams();
   const code = params.code as string;
-  const { gameState, me, myId, isMyTurn, isHost, connected, error, send } = useGameState(code);
+  const { gameState, me, myId, isMyTurn, isHost, connected, error, connectionError, send } = useGameState(code);
 
   const [name, setName] = useState("");
   const [selectedToken, setSelectedToken] = useState<TokenType | null>(null);
@@ -47,8 +47,20 @@ export default function RoomPage() {
 
   if (!connected) {
     return (
-      <main className="flex min-h-screen items-center justify-center">
-        <p className="font-mono text-[var(--text-secondary)] animate-pulse">Connecting...</p>
+      <main className="flex min-h-screen flex-col items-center justify-center gap-4">
+        {connectionError ? (
+          <>
+            <p className="font-mono text-red-400 text-sm text-center max-w-md">{connectionError}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="glass-panel px-4 py-2 font-mono text-sm text-[#00ff64] hover:bg-[rgba(0,255,100,0.1)] transition-colors"
+            >
+              REFRESH
+            </button>
+          </>
+        ) : (
+          <p className="font-mono text-[var(--text-secondary)] animate-pulse">Connecting...</p>
+        )}
       </main>
     );
   }

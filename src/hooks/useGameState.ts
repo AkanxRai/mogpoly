@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
-import type { GameState, ClientMessage } from "@/types/game";
+import { useState, useMemo } from "react";
+import type { GameState } from "@/types/game";
 import { usePartySocket } from "./usePartySocket";
 
 export function useGameState(roomCode: string) {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { send, connected, myId } = usePartySocket({
+  const { send, connected, myId, connectionError } = usePartySocket({
     roomCode,
     onGameState: setGameState,
     onError: (msg) => {
@@ -32,5 +32,5 @@ export function useGameState(roomCode: string) {
     [gameState, myId]
   );
 
-  return { gameState, me, myId, isMyTurn, isHost, connected, error, send };
+  return { gameState, me, myId, isMyTurn, isHost, connected, error, connectionError, send };
 }
