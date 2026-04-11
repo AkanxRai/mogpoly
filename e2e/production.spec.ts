@@ -87,8 +87,8 @@ test.describe("Production - Multiplayer", () => {
     await page1.locator("button:has-text('START GAME')").click();
 
     // Board renders for both
-    await expect(page1.locator("text=Homepage").first()).toBeVisible({ timeout: 15000 });
-    await expect(page2.locator("text=Homepage").first()).toBeVisible({ timeout: 15000 });
+    await expect(page1.locator("text=HOME").first()).toBeVisible({ timeout: 15000 });
+    await expect(page2.locator("text=HOME").first()).toBeVisible({ timeout: 15000 });
 
     // One player should see ROLL DICE button in the board center
     const roll1 = await page1.getByRole("button", { name: "ROLL DICE" }).isVisible().catch(() => false);
