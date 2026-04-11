@@ -29,8 +29,8 @@ export default function CornerTile({ name, index, players, currentPlayerId }: Co
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)]">
-      <span className="text-xs md:text-lg">{CORNER_ICONS[name] ?? "❓"}</span>
-      <span className="text-[5px] md:text-[8px] font-mono text-[var(--text-dim)] text-center leading-tight">
+      <span className="text-[10px] md:text-lg">{CORNER_ICONS[name] ?? "❓"}</span>
+      <span className="text-[5px] md:text-[7px] font-bold text-white/40 text-center leading-tight">
         {CORNER_SHORT[name] ?? name}
       </span>
       {playersHere.length > 0 && (

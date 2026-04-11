@@ -21,7 +21,7 @@ export default function PlayerStats({ players, currentPlayerIndex, myId }: Playe
             player.bankrupt ? "opacity-30" : ""
           } ${i === currentPlayerIndex ? "glow-green" : ""}`}
         >
-          <Token token={player.token} size="sm" isCurrentPlayer={i === currentPlayerIndex} />
+          <Token token={player.token} size="md" isCurrentPlayer={i === currentPlayerIndex} />
           <span className={`truncate max-w-[50px] md:max-w-[80px] ${player.id === myId ? "text-[#00ff64]" : "text-[var(--text-secondary)]"}`}>
             {player.name}
           </span>
